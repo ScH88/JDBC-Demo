@@ -36,8 +36,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class Menu extends JFrame {
 	private static final long serialVersionUID = 1L;
-	//Integer for the state of the menu (with a default ID of 0 for the main menu)
-
 	//Default width of window
 	private int width = 800;
 	//Default height of window
