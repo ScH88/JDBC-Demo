@@ -265,19 +265,10 @@ public class Menu extends JFrame {
 		updateJPanels();
 	}
 	
-	public void updateJPanels() {
-		//Repaint the north JPanel to update the changes
-		panelNorth.repaint();
-		//Repaint the center JPanel to update the changes
-		panelCenter.repaint();
-		//Repaint the south JPanel to update the changes
-		panelSouth.repaint();
-	}
-	
 	public void setupQuit() {
-		//Set up a new "Quit" instance
+		//Set up a new "Quit" JDialog instance
 		Quit quit = new Quit();
-		//Add a WindowListener to the Confirmation JDialog
+		//Add a WindowListener to the Quit JDialog
 		quit.addWindowListener(new WindowListener() {
 			@Override
 			public void windowOpened(WindowEvent e) {}
@@ -285,7 +276,7 @@ public class Menu extends JFrame {
 			public void windowClosing(WindowEvent e) {}
 			@Override
 			public void windowClosed(WindowEvent e) {
-				//If this confirmation JDialog has been closed, call the menu's toggleButtonUse function to enable JComponent use again
+				//If this Quit JDialog has been closed, call the menu's toggleButtonUse function to enable JComponent use again
 				toggleButtonUse();
 				//Set this frame's setFocusableWindowState and setFocusable to true, allowing all content to be clicked again
 				setFocusableWindowState(true);
@@ -302,6 +293,15 @@ public class Menu extends JFrame {
 		});
 		//Call the toggleButtonUse function to temporarily disable JComponent use in the south and center JPanels
 		toggleButtonUse();
+	}
+	
+	public void updateJPanels() {
+		//Repaint the north JPanel to update the changes
+		panelNorth.repaint();
+		//Repaint the center JPanel to update the changes
+		panelCenter.repaint();
+		//Repaint the south JPanel to update the changes
+		panelSouth.repaint();
 	}
 	
 	public void toggleButtonUse() {
@@ -365,6 +365,7 @@ public class Menu extends JFrame {
 		panelCenter.add(comp);
 	}
 	
+	//Updates root pane key bindings for keyboard users
 	public void modifyRootKeyBindings(String type) {
 		//Get the root pane (i.e. the main JFrame)
 		JRootPane rp = getRootPane();
