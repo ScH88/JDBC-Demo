@@ -9,20 +9,22 @@ import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 
 import org.mypackage.jdbcDemo.dao.HibernateDaoImpl;
+import org.mypackage.jdbcDemo.graphics.ButtonLabel;
 import org.mypackage.jdbcDemo.input.InputHandler;
 import org.mypackage.jdbcDemo.model.Fruit;
 import org.mypackage.jdbcDemo.pages.Menu;
 
 public class SeeAll {
 	
-	//JButton objects for the "OK" button
-	private JButton backButt;
+	//ButtonLabel object for the "back" button
+	private ButtonLabel backButt;
 	//Menu which this instance will reference
 	private Menu menu;
 	//JScrollPane
@@ -33,14 +35,14 @@ public class SeeAll {
 		this.menu = menu;
 		//Instantiate the JScrollPane
 		pane = new JScrollPane();
-		//Instantiate the JButton
-		backButt = new JButton();
+		//Instantiate the back ButtonLabel
+		backButt = new ButtonLabel("back", 90, 40);
 	}
 	
 	public void setText() {
-		//HTML String for the text
+		//HTML String for the text of size 22 pixels, underlined and coloured green
 		String text = "<html><body>"
-		+ "<h1 style='font-size:12px; text-decoration:underline;'>List Of Apples And Oranges</h1>"		
+		+ "<h1 style='font-size:22px; color:#7CFC00; text-decoration:underline;'>List Of Apples And Oranges</h1>"		
 		+ "</html></body>";
 		//Pass the text to the menu's setText function, with width of 200 and height of 150
 		menu.setText(text, 200, 150);
@@ -83,7 +85,7 @@ public class SeeAll {
 		//Remove the scrollpane's border
 		pane.setBorder(null);
 		//Set the scrollpane's preferred size
-		pane.setPreferredSize(new Dimension(500, 250));
+		pane.setPreferredSize(new Dimension(500, 285));
 		//Give the scroll pane a vertical scrollbar
 		pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		//Add a key listener to the JScrollPane (because when implementing a certain if statement, key bindings would not let it work for some reason)
@@ -122,8 +124,6 @@ public class SeeAll {
 	}
 	
 	public void renderButton() {
-		//Set the text of the "Back" button
-		backButt.setText("BACK");
 		//Add the following action listener to the "back" button
 		backButt.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -131,12 +131,24 @@ public class SeeAll {
 				setupMainMenu();
 			}
 		});
-		//Add to the back button's input map a keystroke for the enter key
-		backButt.getInputMap().put(KeyStroke.getKeyStroke("ENTER"), "enterPressed");
-		//Add to the back button's action map an abstractAction for if the enter key is pressed
-		backButt.getActionMap().put("enterPressed", new AbstractAction(){
+		//Add a key binding to the back ButtonLabel's input map for when the enter key is pressed
+		backButt.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0,false), "enterPressed");
+		//Add to the back ButtonLabel's action map an abstract action that will perform when the enter key is pressed
+		backButt.getActionMap().put("enterPressed",new AbstractAction(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				//Call the buttonLabel's setClicked function
+				backButt.setClicked();
+			}
+		});
+		//Add a key binding to the parameter ButtonLabel's input map for when the enter key is released
+		backButt.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0,true), "enterReleased");
+		//Add to the parameter ButtonLabel's action map an abstract action that will perform when the enter key is released
+		backButt.getActionMap().put("enterReleased",new AbstractAction(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//Call the ButtonLabel's setReleased function
+				backButt.setEnteredOrReleased();		
 				//Call the setupMainMenu function
 				setupMainMenu();
 			}

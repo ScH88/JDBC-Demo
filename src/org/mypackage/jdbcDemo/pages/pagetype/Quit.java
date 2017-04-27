@@ -6,16 +6,21 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
 
+import org.mypackage.jdbcDemo.graphics.ButtonLabel;
 import org.mypackage.jdbcDemo.input.InputHandler;
 import org.mypackage.jdbcDemo.pages.Menu;
 
@@ -52,16 +57,17 @@ public class Quit extends JDialog {
 		setLocationRelativeTo(null);
 		//Set resizable to false
 		setResizable(false);
-		//Set visible to true, making this frame appear
-		setVisible(true);
 		//Set the JPanel's layout to null, allowing absolute component placement
 		window.setLayout(null);
-		//Call the drawContent function
-		drawContent();
 		//Call the JPanel's repaint function, updating it of the changes made
 		window.repaint();
+		//Call the drawContent function
+		drawContent();
 		//Set the modality of this JDialog (always puts this dialog in front of the JFrame application, even when minimized)
+		//Must be called before setVisible in order to work, and must be called after all content is drawn
 		setModal(true);
+		//Set visible to true, making this frame appear
+		setVisible(true);
 	}
 
 	private void drawContent() {
@@ -77,79 +83,36 @@ public class Quit extends JDialog {
 		window.add(text);
 		//Instantiate the "NO" JButton
 		NO = new JButton("NO");
-		//Instantiate the "NO" JButton recangle bounds
+		//Set the "NO" button's contentAreaFilled criteria to allow recolouring
+		NO.setContentAreaFilled(false);
+		//Set the "NO" button's opacity to true
+		NO.setOpaque(true);
+		//Instantiate the "NO" JButton rectangle bounds
 		rNO = new Rectangle(20, (height-40), button_width, (button_height - 10));
 		NO.setBounds(rNO);
-		//Add the "NO" button to the JPanel
-		window.add(NO);
 		//Instantiate the "YES" JButton
 		YES = new JButton("YES");
-		//Instantiate the "YES" JButton recangle bounds
+		//Set the "YES" button's contentAreaFilled criteria to allow recolouring
+		YES.setContentAreaFilled(false);
+		//Set the "YES" button's opacity to true
+		YES.setOpaque(true);
+		//Instantiate the "YES" JButton rectangle bounds
 		rYES = new Rectangle((width - 20) - button_width, (height-40), button_width, (button_height - 10));
 		YES.setBounds(rYES);
+		//Send the "NO" button to the setMouseListener function, along with relevant String
+		setMouseListener(NO, "no");
+		//Send the "YES" button to the setMouseListener function, along with relevant String
+		setMouseListener(YES, "yes");
+		//Send the "YES" button to the setKeyBindings function, along with relevant String
+		setKeyBindings(YES, "yes");
+		//Send the "NO" button to the setKeyBindings function, along with relevant String
+		setKeyBindings(NO, "no");
+		//Send the "YES" button to the setKeyBindings function, along with relevant String
+		setKeyBindings(YES, "yes");
+		//Add the "NO" button to the JPanel
+		window.add(NO);
 		//Add the "YES" button to the JPanel
 		window.add(YES);
-		//Add an ActionListener to the "NO" JButton
-		NO.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				//Dispose of this instance
-				dispose();
-				//Call the menu's toggleButtonUse function, allowing buttons to be clickable again
-				//menu.toggleButtonUse();
-				//Set the menu's frame's setFocusableWindowState and setFocusable to true, allowing all content to be clicked again
-				//menu.setFocusableWindowState(true);
-				//menu.setFocusable(true);
-			}
-		});
-		//Add to the "NO" JButton's input map a keystroke for the enter key
-		NO.getInputMap().put(KeyStroke.getKeyStroke("ENTER"), "enterPressed");
-		//Add to the "NO" JButton's action map an abstractAction for if the enter key is pressed
-		NO.getActionMap().put("enterPressed", new AbstractAction(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				//Dispose of this instance
-				dispose();
-			}		
-		});
-		//Add to the "NO" JButton's input map a keystroke for the right key
-		NO.getInputMap().put(KeyStroke.getKeyStroke("RIGHT"), "rightPressed");
-		//Add to the "NO" JButton's action map an abstractAction for if the enter key is pressed
-		NO.getActionMap().put("rightPressed", new AbstractAction(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				//Have the program focus on the "yes" button
-				YES.requestFocus();
-			}
-		});
-		//Add an ActionListener to the "YES" JButton
-		YES.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				//Close this system
-				System.exit(0);
-			}
-		});
-		//Add to the "YES" JButton's input map a keystroke for the enter key
-		YES.getInputMap().put(KeyStroke.getKeyStroke("ENTER"), "enterPressed");
-		//Add to the "YES" JButton's action map an abstractAction for if the enter key is pressed
-		YES.getActionMap().put("enterPressed", new AbstractAction(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				//Close this system
-				System.exit(0);
-			}
-		});
-		//Add to the "YES" JButton's input map a keystroke for the left key
-		YES.getInputMap().put(KeyStroke.getKeyStroke("LEFT"), "leftPressed");
-		//Add to the "YES" JButton's action map an abstractAction for if the left key is pressed
-		YES.getActionMap().put("leftPressed", new AbstractAction(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				//Have the program focus on the "no" button
-				NO.requestFocus();
-			}
-		});
-		//Have the program focus on this JDialog
-		this.requestFocus();
 		//Get the root pane (i.e. the main JFrame)
 		JRootPane rp = super.getRootPane();
 		//Add to the "YES" JButton's input map a keystroke for the left key
@@ -168,5 +131,98 @@ public class Quit extends JDialog {
 				
 			}
 		});
+		//Have the program focus on this JDialog
+		this.requestFocus();
+	}
+	
+	public void setMouseListener(JComponent comp, String compName) {
+		//Add a mouse listener to the "okay" button
+		comp.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				//
+				if (compName.equals("no")) {
+					//Dispose of this instance
+					dispose();
+				} else if (compName.equals("yes")) {
+					//Close this system
+					System.exit(0);
+				}
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				//Set background colour of the parameter JComponent button to red
+				((JButton)comp).setBackground(Color.RED);
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				//Reset background colour of the parameter JComponent back to it's default
+				((JButton)comp).setBackground(UIManager.getColor("Button.background"));				
+			}
+			@Override
+			public void mouseEntered(MouseEvent e) {}
+			@Override
+			public void mouseExited(MouseEvent e) {}
+		});
+	}
+	
+	public void setKeyBindings(JComponent comp, String compName) {
+		//If the parameter String component does not equal that of the "back" button
+		if (compName != "yes") {
+			//Add to the JComponent's input map a keystroke for the down key
+			comp.getInputMap().put(KeyStroke.getKeyStroke("RIGHT"), "rightPressed");
+			//Add to the JComponent's action map an abstractAction for if the down key is pressed
+			comp.getActionMap().put("rightPressed", new AbstractAction(){
+				@Override
+				public void actionPerformed(ActionEvent e){
+					//Have the program focus on the "YES" button
+					YES.requestFocus();
+				}
+			});
+		}
+		//Add a key binding to the parameter JComponent's input map for when the enter key is pressed
+		comp.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0,false), "enterPressed");
+		//Add to the parameter ButtonLabel's action map an abstract action that will perform when the enter key is pressed
+		comp.getActionMap().put("enterPressed",new AbstractAction(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//Set the background colour of the component to red
+				comp.setBackground(Color.RED);
+			}
+		});
+		//Add a key binding to the parameter JComponent's input map for when the enter key is released
+		comp.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0,true), "enterReleased");
+		//Add to the parameter ButtonLabel's action map an abstract action that will perform when the enter key is released
+		comp.getActionMap().put("enterReleased",new AbstractAction(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//Reset the background colour of the component to it's default
+				comp.setBackground(UIManager.getColor("Button.background"));
+				//If the parameter String equals "no"
+				if (compName == "no") {
+					//Dispose of this instance
+					dispose();
+				//If the parameter String equals "yes"
+				} else if (compName == "yes") {
+					//Close this system
+					System.exit(0);
+				}
+			}
+		});
+		//If the component name is not that of "fto" (fruit type options)
+		if (compName != "no") {
+			//Add a key binding to the parameter JComponent's input map for when the up key is pressed
+			comp.getInputMap().put(KeyStroke.getKeyStroke("LEFT"), "leftPressed");
+			//Add to the JComponent's action map an abstractAction for if the up key is pressed
+			comp.getActionMap().put("leftPressed", new AbstractAction(){
+				@Override
+				public void actionPerformed(ActionEvent e){
+					//Have the program focus on the "NO" button
+					NO.requestFocus();
+				}
+			});
+		}
 	}
 }
