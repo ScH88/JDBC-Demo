@@ -319,7 +319,7 @@ public class Menu extends JFrame {
 	public void setupQuit() {
 		//Set up a new "Quit" instance
 		Quit quit = new Quit();
-		//Add a WindowListener to the Confirmation JDialog
+		//Add a WindowListener to the Quit JDialog
 		quit.addWindowListener(new WindowListener() {
 			@Override
 			public void windowOpened(WindowEvent e) {}
@@ -327,7 +327,7 @@ public class Menu extends JFrame {
 			public void windowClosing(WindowEvent e) {}
 			@Override
 			public void windowClosed(WindowEvent e) {
-				//If this confirmation JDialog has been closed, call the menu's toggleButtonUse function to enable JComponent use again
+				//If this Quit JDialog has been closed, call the menu's toggleButtonUse function to enable JComponent use again
 				toggleButtonUse();
 				//Set this frame's setFocusableWindowState and setFocusable to true, allowing all content to be clicked again
 				setFocusableWindowState(true);
