@@ -6,6 +6,8 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -15,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
 
 import org.mypackage.jdbcDemo.input.InputHandler;
 import org.mypackage.jdbcDemo.pages.Menu;
@@ -116,13 +119,32 @@ private static final long serialVersionUID = 1L;
 		window.add(text);
 		//Instantiate the "okay" JButton
 		okay = new JButton("OKAY");
+		//Set the "okay" button's contentAreaFilled criteria to allow recolouring
+		okay.setContentAreaFilled(false);
+		//Set the "okay" button's opacity to true
+		okay.setOpaque(true);
 		//Instantiate the "okay" JButton rectangle bounds
 		rOkay = new Rectangle((width/2) - (button_width/2), (height-40), button_width, (button_height - 10));
 		//Set the boundaries (size, location) of the "okay" button as the rectangle
 		okay.setBounds(rOkay);
-		//Add an ActionListener to the "okay" JButton
-		okay.addActionListener(new ActionListener() {
+		//Add a key binding to the "okay" JButton's input map for when the enter key is pressed
+		okay.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0,false), "enterPressed");
+		//Add to the "okay" JButton's action map an abstract action that will perform when the enter key is pressed
+		okay.getActionMap().put("enterPressed",new AbstractAction(){
+			@Override
 			public void actionPerformed(ActionEvent e) {
+				//Change the background colour of the "okay" JButton to red
+				okay.setBackground(Color.RED);
+			}
+		});
+		//Add a key binding to the "okay" JButton's input map for when the enter key is released
+		okay.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0,true), "enterReleased");
+		//Add to the "okay" JButton's action map an abstract action that will perform when the enter key is released
+		okay.getActionMap().put("enterReleased",new AbstractAction(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//Reset background colour back to it's default
+				okay.setBackground(UIManager.getColor("Button.background"));
 				//Dispose of this instance
 				dispose();
 				//Set the menu's frame's setFocusableWindowState and setFocusable to true, allowing all content to be clicked again
@@ -130,18 +152,33 @@ private static final long serialVersionUID = 1L;
 				menu.setFocusable(true);
 			}
 		});
-		//Add to the "okay" JButton's input map a keystroke for the enter key
-		okay.getInputMap().put(KeyStroke.getKeyStroke("ENTER"), "enterPressed");
-		//Add to the "okay" JButton's action map an abstractAction for if the enter key is pressed
-		okay.getActionMap().put("enterPressed", new AbstractAction(){
+		//Add a mouse listener to the "okay" button
+		okay.addMouseListener(new MouseListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void mouseClicked(MouseEvent e) {
 				//Dispose of this instance
 				dispose();
 				//Set the menu's frame's setFocusableWindowState and setFocusable to true, allowing all content to be clicked again
 				menu.setFocusableWindowState(true);
 				menu.setFocusable(true);
 			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				//Set background colour of the "okay" button to red
+				okay.setBackground(Color.RED);
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				//Reset background colour back of the "okay" button to it's default
+				okay.setBackground(UIManager.getColor("Button.background"));				
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {}
+			@Override
+			public void mouseExited(MouseEvent e) {}
 		});
 		//Add the "okay" button to the "window" JPanel
 		window.add(okay);

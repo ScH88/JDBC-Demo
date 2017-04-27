@@ -23,6 +23,7 @@ import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
 
 import org.mypackage.jdbcDemo.dao.HibernateDaoImpl;
+import org.mypackage.jdbcDemo.graphics.ContentPane;
 import org.mypackage.jdbcDemo.input.InputHandler;
 import org.mypackage.jdbcDemo.pages.pagetype.Add;
 import org.mypackage.jdbcDemo.pages.pagetype.Confirmation;
@@ -42,6 +43,8 @@ public class Menu extends JFrame {
 	private int height = 600;
 	//Boolean for if the program is usable (for if the user clicks the top-right "X". Has default value of true
 	private boolean toggleUse = true;
+	//
+	public ContentPane backPane;
 	//JPanels for the North(title), Center(content), South(navigation buttons), east(padding) and west(padding) of the screen
 	public JPanel panelNorth, panelCenter, panelSouth, panelEast, panelWest;
 	//MainMenu page instance
@@ -82,37 +85,52 @@ public class Menu extends JFrame {
 		addMouseListener(input);
 		//Add a mouse motion listener to the frame using the input handler
 		addMouseMotionListener(input);
+		//Instantiate the background ContentPane custom JPanel
+		backPane = new ContentPane();
+		//Set the ContentPane's layout as a BorderLayout
+		backPane.setLayout(new BorderLayout());
 		//Instantiate the north JPanel
 		panelNorth = new JPanel();
 		//Set the border of the north JPanel to provide padding to the content
-		panelNorth.setBorder(new EmptyBorder(40, 40, 40, 40));
+		panelNorth.setBorder(new EmptyBorder(30, 30, 30, 30));
+		//Have the JPanel be a transparent background
+		panelNorth.setOpaque(false);
 		//Instantiate the center JPanel
 		panelCenter = new JPanel();
 		//Set the border of the center JPanel to provide padding to the content
 		panelCenter.setBorder(new EmptyBorder(20, 20, 20, 20));
+		//Have the JPanel be a transparent background
+		panelCenter.setOpaque(false);
 		//Instantiate the south JPanel
 		panelSouth = new JPanel();
 		//Set the border of the south JPanel to provide padding to the content
-		panelSouth.setBorder(new EmptyBorder(50, 50, 50, 50));
+		panelSouth.setBorder(new EmptyBorder(30, 30, 30, 30));
+		//Have the JPanel be a transparent background
+		panelSouth.setOpaque(false);
 		//Instantiate the east JPanel
 		panelEast = new JPanel();
 		//Set the border of the east JPanel to provide padding to the content
 		panelEast.setBorder(new EmptyBorder(50, 50, 50, 50));
+		//Have the JPanel be a transparent background
+		panelEast.setOpaque(false);
 		//Instantiate the west JPanel
 		panelWest = new JPanel();
 		//Set the border of the west JPanel to provide padding to the content
 		panelWest.setBorder(new EmptyBorder(50, 50, 50, 50));
-		
-		//Add the north JPanel to the JFrame's content pane, giving it the BorderLayout's NORTH value
-		getContentPane().add(panelNorth, BorderLayout.NORTH);
-		//Add the center JPanel to the JFrame's content pane, giving it the BorderLayout's CENTER value
-		getContentPane().add(panelCenter, BorderLayout.CENTER);
-		//Add the south JPanel to the JFrame's content pane, giving it the BorderLayout's SOUTH value
-		getContentPane().add(panelSouth, BorderLayout.SOUTH);
-		//Add the east JPanel to the JFrame's content pane, giving it the BorderLayout's EAST value
-		getContentPane().add(panelEast, BorderLayout.EAST);
-		//Add the west JPanel to the JFrame's content pane, giving it the BorderLayout's WEST value
-		getContentPane().add(panelWest, BorderLayout.WEST);
+		//Have the JPanel be a transparent background
+		panelWest.setOpaque(false);
+		//Add the ContentPane to the JFrame's content pane
+		getContentPane().add(backPane);
+		//Add the north JPanel to the ContentPane, giving it the BorderLayout's NORTH value
+		backPane.add(panelNorth, BorderLayout.NORTH);
+		//Add the center JPanel to the ContentPane, giving it the BorderLayout's CENTER value
+		backPane.add(panelCenter, BorderLayout.CENTER);
+		//Add the south JPanel to the ContentPane, giving it the BorderLayout's SOUTH value
+		backPane.add(panelSouth, BorderLayout.SOUTH);
+		//Add the east JPanel to the ContentPane, giving it the BorderLayout's EAST value
+		backPane.add(panelEast, BorderLayout.EAST);
+		//Add the west JPanel to the ContentPane, giving it the BorderLayout's WEST value
+		backPane.add(panelWest, BorderLayout.WEST);
 		//Instantiate a WindowListener for the event which the close button in the top header bar is clicked
 		WindowListener exitListener = new WindowAdapter() {
 			@Override
@@ -161,6 +179,10 @@ public class Menu extends JFrame {
 			//Instantiate the main menu by passing it the parameter value
 			mainMenu = m;
 		}
+		//Set the back ContentPane's image by calling it's paintBackground function and passing it 1
+		backPane.paintBackground(1);
+		//Set the opacity of the center JPanel back to false to remove background colour
+		panelCenter.setOpaque(false);
 		//Set the layout of the center JPanel as a new FlowLayout
 		panelCenter.setLayout(new FlowLayout());
 		//Call the main menu's setText function
@@ -177,6 +199,10 @@ public class Menu extends JFrame {
 			//Instantiate the main menu by passing it the parameter value
 			mainMenu = new MainMenu();
 		}
+		//Change the background ContentPane by calling it's paintBackground function and passing it 1
+		backPane.paintBackground(1);
+		//Set the opacity of the center JPanel back to false to remove backgrounbd colour
+		panelCenter.setOpaque(false);
 		//Set the layout of the center JPanel as a new FlowLayout
 		panelCenter.setLayout(new FlowLayout());
 		//Call the main menu's setText function
@@ -193,10 +219,14 @@ public class Menu extends JFrame {
 			//Instantiate the seeAll page, passing it this instance for it to reference
 			seeAll = new SeeAll(this);
 		}
-		//Call the seeAll page's setText function
-		seeAll.setText();
+		//Change the image of the background ContentPane by calling it's paintBackground function and passing it 2
+		backPane.paintBackground(2);
+		//Set the center JPanel's opacity to true to enable background colour
+		panelCenter.setOpaque(true);
 		//Set the background colour of the center JPanel to gray
 		panelCenter.setBackground(Color.GRAY);
+		//Call the seeAll page's setText function
+		seeAll.setText();
 		//Call the seeAll page's renderButton function
 		seeAll.renderButton();
 		//Call the seeAll page's renderContent function
@@ -211,12 +241,16 @@ public class Menu extends JFrame {
 			//Instantiate the Add page, passing it this Menu instance for it to reference
 			add = new Add(this);
 		}
+		//Change the image of the background ContentPane by calling it's paingBackground function and passing it 3
+		backPane.paintBackground(3);
 		//Set the layout of the center JPanel as a new GridBagLayout
 		panelCenter.setLayout(new GridBagLayout());
-		//Call the Add page's setText function
-		add.setText();
+		//Set the center JPanel's opacity to true to enable background colour
+		panelCenter.setOpaque(true);
 		//Set the background colour of the center JPanel to gray
 		panelCenter.setBackground(Color.GRAY);
+		//Call the Add page's setText function
+		add.setText();
 		//Call the Add page's renderButton function
 		add.renderButton();
 		//Call the Add page's renderContent function
@@ -231,12 +265,16 @@ public class Menu extends JFrame {
 			//Instantiate the Remove page, passing it this instance for it to reference
 			remove = new Remove(this);
 		}
+		//Change the image of the background ContentPane by calling it's paintBackground function and passing it 4
+		backPane.paintBackground(4);
 		//Set the layout of the center JPanel as a new GridLayout, with a single column and as many rows as needed
 		panelCenter.setLayout(new GridBagLayout());
-		//Call the Remove page's setText function
-		remove.setText();
+		//Set the center JPanel's opacity to true to enable background colour
+		panelCenter.setOpaque(true);
 		//Set the background of the center JPanel to gray
 		panelCenter.setBackground(Color.GRAY);
+		//Call the Remove page's setText function
+		remove.setText();
 		//Call the Remove page's renderButton function
 		remove.renderButton();
 		//Call the Remove page's renderContent function
@@ -251,12 +289,16 @@ public class Menu extends JFrame {
 			//Instantiate the Edit page, passing it this instance for it to reference
 			edit = new Edit(this);
 		}
+		//Change the image of the background ContentPane by calling it's paintBackground function and passing it 5
+		backPane.paintBackground(5);
 		//Set the layout of the center JPanel as a new GridLayout, with a single column and as many rows as needed
 		panelCenter.setLayout(new GridBagLayout());
-		//Call the Edit page's setText function
-		edit.setText();
+		//Set the center JPanel's opacity to true to enable background colour
+		panelCenter.setOpaque(true);
 		//Set the background colour of the center JPanel to gray
 		panelCenter.setBackground(Color.GRAY);
+		//Call the Edit page's setText function
+		edit.setText();
 		//Call the Edit page's renderButtons function
 		edit.renderButtons();
 		//Call the Edit page's renderContent function
@@ -265,10 +307,19 @@ public class Menu extends JFrame {
 		updateJPanels();
 	}
 	
+	public void updateJPanels() {
+		//Repaint the north JPanel to update the changes
+		panelNorth.repaint();
+		//Repaint the center JPanel to update the changes
+		panelCenter.repaint();
+		//Repaint the south JPanel to update the changes
+		panelSouth.repaint();
+	}
+	
 	public void setupQuit() {
-		//Set up a new "Quit" JDialog instance
+		//Set up a new "Quit" instance
 		Quit quit = new Quit();
-		//Add a WindowListener to the Quit JDialog
+		//Add a WindowListener to the Confirmation JDialog
 		quit.addWindowListener(new WindowListener() {
 			@Override
 			public void windowOpened(WindowEvent e) {}
@@ -276,7 +327,7 @@ public class Menu extends JFrame {
 			public void windowClosing(WindowEvent e) {}
 			@Override
 			public void windowClosed(WindowEvent e) {
-				//If this Quit JDialog has been closed, call the menu's toggleButtonUse function to enable JComponent use again
+				//If this confirmation JDialog has been closed, call the menu's toggleButtonUse function to enable JComponent use again
 				toggleButtonUse();
 				//Set this frame's setFocusableWindowState and setFocusable to true, allowing all content to be clicked again
 				setFocusableWindowState(true);
@@ -295,15 +346,6 @@ public class Menu extends JFrame {
 		toggleButtonUse();
 	}
 	
-	public void updateJPanels() {
-		//Repaint the north JPanel to update the changes
-		panelNorth.repaint();
-		//Repaint the center JPanel to update the changes
-		panelCenter.repaint();
-		//Repaint the south JPanel to update the changes
-		panelSouth.repaint();
-	}
-	
 	public void toggleButtonUse() {
 		//Array of Component objects from the south JPanel, created from the return value of the getComponents function (returns all children)
 		Component[] components = panelSouth.getComponents();
@@ -311,8 +353,9 @@ public class Menu extends JFrame {
 		Component[] components2 = panelCenter.getComponents();
 		//For each Component in the south panel's component array
 		for (int i = 0; i < components.length; i++) {
-		    //If the current component is a JButton
-			if (components[i].getClass().getName().toString().equals("javax.swing.JButton")){   
+		    //If the current component is a JButton or a ButtonLabel custom class
+			if (components[i].getClass().getName().toString().equals("javax.swing.JButton")
+				|| components[i].getClass().getName().toString().equals("org.mypackage.jdbcDemo.graphics.ButtonLabel")){   
 				//If the current button is enabled
 				if (components[i].isEnabled() == true) {
 		        	//Disable the button
@@ -322,7 +365,7 @@ public class Menu extends JFrame {
 		        	//Enable it again
 		        	components[i].setEnabled(true);
 		        }
-		    }
+		    } 
 		}
 		//For each Component in the center panel's component array
 		for (int i = 0; i < components2.length; i++) {
@@ -365,7 +408,6 @@ public class Menu extends JFrame {
 		panelCenter.add(comp);
 	}
 	
-	//Updates root pane key bindings for keyboard users
 	public void modifyRootKeyBindings(String type) {
 		//Get the root pane (i.e. the main JFrame)
 		JRootPane rp = getRootPane();

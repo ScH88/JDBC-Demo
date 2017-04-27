@@ -1,9 +1,12 @@
 package org.mypackage.jdbcDemo.pages.pagetype;
 
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.HashMap;
@@ -14,16 +17,19 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JRootPane;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
 import org.mypackage.jdbcDemo.dao.HibernateDaoImpl;
+import org.mypackage.jdbcDemo.graphics.ButtonLabel;
 import org.mypackage.jdbcDemo.input.InputHandler;
 import org.mypackage.jdbcDemo.model.Apple;
 import org.mypackage.jdbcDemo.model.Fruit;
@@ -33,8 +39,10 @@ import org.mypackage.jdbcDemo.pages.Menu;
 //public class Options extends Menu {
 public class Add {
 	
-		//JButton objects for the "Back" and "Okay" buttons
-		private JButton backButt, okay;
+		//JButton objects for the "Okay" button
+		private JButton okay;
+		//ButtonLabel custom class instance for the "back" button
+		private ButtonLabel backButt;
 		//JLabel for form validation dialog
 		private JLabel validationLab;
 		//Menu which this instance will reference
@@ -49,18 +57,29 @@ public class Add {
 			this.menu = menu;
 			//Instantiate the "okay" button
 			okay = new JButton();
-			//Instantiate the "back" button
-			backButt = new JButton();
+			//Set the "okay" button's contentAreaFilled criteria to allow recolouring
+			okay.setContentAreaFilled(false);
+			//Set the "okay" button's opacity to true
+			okay.setOpaque(true);
+			//Instantiate the "back" ButtonLabel
+			backButt = new ButtonLabel("back", 90, 40);
 			//Instantiate the fruit type options JComboBox
 			fruitTypeOptions = new JComboBox();
 			//Instantiate the JTextArea, with size of 5 columns and 15 rows
 			tex = new JTextArea(5, 15);
+			//Set up text wrapping for both word and line in the JTextArea
+			tex.setWrapStyleWord(true);
+			tex.setLineWrap(true);
+			//Set up a padding of 10 around the JTextArea
+			tex.setBorder(BorderFactory.createCompoundBorder(
+			tex.getBorder(), 
+			BorderFactory.createEmptyBorder(10, 10, 10, 10)));
 		}
 		
 		public void setText() {
-			//HTML String for the header text
+			//HTML String for the header text, font size is 22 pixels, colour is green and underlined
 			String text = "<html><body>"
-			+ "<h1 style='font-size:14px; text-decoration:underline;'>Insert Apple/Orange</h1>"		
+			+ "<h1 style='font-size:22px; color:#7CFC00; text-decoration:underline;'>Insert Apple/Orange</h1>"		
 			+ "</html></body>";
 			//Pass the text to the menu's setText function, with width of 200 and height of 150
 			menu.setText(text, 100, 150);
@@ -87,13 +106,6 @@ public class Add {
 			JLabel descText = new JLabel(text2);
 			//Set the padding of the JLabel
 			descText.setBorder(new EmptyBorder(10,10,10,10));
-			//Set up text wrapping for both word and line in the JTextArea
-			tex.setWrapStyleWord(true);
-			tex.setLineWrap(true);
-			//Set up a padding of 10 around the JTextArea
-			tex.setBorder(BorderFactory.createCompoundBorder(
-			        tex.getBorder(), 
-			        BorderFactory.createEmptyBorder(10, 10, 10, 10)));
 			//Add a PlainDocument to the JTextArea to enforce a character limit of 50
 			tex.setDocument(new PlainDocument() {
 				@Override
@@ -111,101 +123,36 @@ public class Add {
 			validationLab = new JLabel();
 			//Set the text of the "okay" button
 			okay.setText("ADD FRUIT");
-			//Add an action listener to the "okay" button
-			okay.addActionListener(new ActionListener() {
+			//Add a mouse listener to the "okay" button
+			okay.addMouseListener(new MouseListener() {
 				@Override
-				public void actionPerformed(ActionEvent e) {
+				public void mouseClicked(MouseEvent e) {
 					//Call the addFruit function to add the inputted information as a new Fruit instance
 					addFruit();
 				}
+
+				@Override
+				public void mousePressed(MouseEvent e) {
+					//Change the background colour of the "okay" button to red
+					okay.setBackground(Color.RED);
+				}
+
+				@Override
+				public void mouseReleased(MouseEvent e) {
+					//Reset the background colour of the "okay" button to it's default
+					okay.setBackground(UIManager.getColor("Button.background"));
+				}
+				@Override
+				public void mouseEntered(MouseEvent e) {}
+				@Override
+				public void mouseExited(MouseEvent e) {}
 			});
-			//Add to the "okay" button's input map a keystroke for the enter key
-			okay.getInputMap().put(KeyStroke.getKeyStroke("ENTER"), "enterPressed");
-			//Add to the "okay" button's action map an abstractAction for if the enter key is pressed
-			okay.getActionMap().put("enterPressed", new AbstractAction(){
-		        @Override
-		        public void actionPerformed(ActionEvent e){
-		        	//Call the addFruit function to add the inputted information as a new Fruit instance
-					addFruit();
-		        }
-		    });
-			//Add to the "okay" button's input map a keystroke for the down key
-			okay.getInputMap().put(KeyStroke.getKeyStroke("DOWN"), "downPressed");
-			//Add to the "okay" button's action map an abstractAction for if the down key is pressed
-			okay.getActionMap().put("downPressed", new AbstractAction(){
-		        @Override
-		        public void actionPerformed(ActionEvent e){
-		        	//Set the program focus on the "back" button
-					backButt.requestFocus();
-		        }
-		    });
-			//Add to the "okay" button's input map a keystroke for the up key
-			okay.getInputMap().put(KeyStroke.getKeyStroke("UP"), "upPressed");
-			//Add to the "okay" button's action map an abstractAction for if the up key is pressed
-			okay.getActionMap().put("upPressed", new AbstractAction(){
-		        @Override
-		        public void actionPerformed(ActionEvent e){
-		        	//Set the program focus on the JTextArea
-					tex.requestFocus();
-		        }
-		    });
-			//Add to the "fruitTypeOptions" JComboBox's input map a keystroke for the enter key
-			fruitTypeOptions.getInputMap().put(KeyStroke.getKeyStroke("ENTER"), "enterPressed");
-			//Add to the "fruitTypeOptions" JComboBox's action map an abstractAction for if the enter key is pressed
-			fruitTypeOptions.getActionMap().put("enterPressed", new AbstractAction(){
-		        @Override
-		        public void actionPerformed(ActionEvent e){
-		        	//If the JComboBox's menu is not opened
-		        	if (fruitTypeOptions.isPopupVisible() == false) {
-		        		//Show the popup menu of the JComboBox
-		        		fruitTypeOptions.showPopup();
-		        	//If the JComboBox's menu is opened
-		        	} else {
-		        		//Close the popup menu, selecting the currently selected index in the process
-		        		fruitTypeOptions.hidePopup();
-		        	}
-		        }
-		    });
-			//Add to the "fruitTypeOptions" JComboBox's input map a keystroke for the down key
-			fruitTypeOptions.getInputMap().put(KeyStroke.getKeyStroke("DOWN"), "downPressed");
-			//Add to the "fruitTypeOptions" JComboBox's action map an abstractAction for if the down key is pressed
-			fruitTypeOptions.getActionMap().put("downPressed", new AbstractAction(){
-		       @Override
-		        public void actionPerformed(ActionEvent e){
-		    	   //If the JComboBox's popup menu is not opened
-		        	if (fruitTypeOptions.isPopupVisible() == false) {
-		        		//Have the program request focus on the content JTextArea below
-		        		tex.requestFocus();
-		        	//If the popup menu is open
-		        	} else {
-		        		//If the next index does not equal/exceed the JComboBox's options' item count
-		        		if (fruitTypeOptions.getSelectedIndex() + 1 < fruitTypeOptions.getItemCount()) {
-		        			//Set the currently selected index as the next one down the line
-		        			fruitTypeOptions.setSelectedIndex(fruitTypeOptions.getSelectedIndex() + 1);
-		        		}
-		        	}
-		        }
-		    });
-			//Add to the "tex" JTextArea's input map a keystroke for the up key
-			tex.getInputMap().put(KeyStroke.getKeyStroke("UP"), "upPressed");
-			//Add to the "tex" JTextArea's action map an abstractAction for if the up key is pressed
-			tex.getActionMap().put("upPressed", new AbstractAction(){
-		       @Override
-		        public void actionPerformed(ActionEvent e){
-		        	//Have the program focus on the fruitTypeOptions JComboBox
-		    	   fruitTypeOptions.requestFocus();
-		        }
-		    });
-			//Add to the "tex" JTextArea's input map a keystroke for the down key
-			tex.getInputMap().put(KeyStroke.getKeyStroke("DOWN"), "downPressed");
-			//Add to the "tex" JTextArea's action map an abstractAction for if the down key is pressed
-			tex.getActionMap().put("downPressed", new AbstractAction(){
-		       @Override
-		        public void actionPerformed(ActionEvent e){
-		        	//Have the program focus on the "okay" button
-		    	   okay.requestFocus();
-		        }
-		    });
+			//Pass the "fruitTypeOptions" JComboBox to the setKeyBindings function, along with the appropriate String name
+			setKeyBindings(fruitTypeOptions, "fto");
+			//Pass the "tex" JTextArea to the setKeyBindings function, along with the appropriate String name
+			setKeyBindings(tex, "tex");
+			//Pass the "okay" JComboBox to the setKeyBindings function, along with the appropriate String name
+			setKeyBindings(okay, "okay");
 			//Create a new GridBagConstraints instance
 			GridBagConstraints gbc = new GridBagConstraints();
 			//Anchor the current table alignment to the left of the table
@@ -276,37 +223,120 @@ public class Add {
 		}
 		
 		public void renderButton() {
-			//Set the text of the "back" button
-			backButt.setText("BACK");
 			//Add the following action listener to the play button
 			backButt.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					//Call the setupMainMenu in the SeeAll class
 					setupMainMenu();
 				}
-			});
-			//Add to the "back" JButton's input map a key binding for when the enter key is pressed
-			backButt.getInputMap().put(KeyStroke.getKeyStroke("ENTER"), "enterPressed");
-			//Add to the "back" JButton's action map an abstractAction for if the enter key is pressed
-			backButt.getActionMap().put("enterPressed", new AbstractAction(){
-		       @Override
-		        public void actionPerformed(ActionEvent e){
-		    	   //Call this class' setupSeeAll function
-		    	   setupMainMenu();
-		        }
-		    });
-			//Add to the "back" JButton's input map a key binding for when the up key is pressed
-			backButt.getInputMap().put(KeyStroke.getKeyStroke("UP"), "upPressed");
-			//Add to the "back" JButton's action map an abstractAction for if the up key is pressed
-			backButt.getActionMap().put("upPressed", new AbstractAction(){
-		       @Override
-		        public void actionPerformed(ActionEvent e){
-		    	   //Set the program focus on the "okay" button
-					okay.requestFocus();
-		        }
-		    });
+			});//Pass the "backButt" ButtonLabel to the setKeyBindings function, along with the appropriate String name
+			setKeyBindings(backButt, "back");
 			//Call the menu's renderButton function, passing it the "back" button recently created
 			menu.renderButton(backButt);
+		}
+		
+		public void setKeyBindings(JComponent comp, String compName) {
+			//If the parameter String component does not equal that of the "back" button
+			if (compName != "back") {
+				//Add to the JComponent's input map a keystroke for the down key
+				comp.getInputMap().put(KeyStroke.getKeyStroke("DOWN"), "downPressed");
+				//Add to the JComponent's action map an abstractAction for if the down key is pressed
+				comp.getActionMap().put("downPressed", new AbstractAction(){
+					@Override
+					public void actionPerformed(ActionEvent e){
+						//If the component name is "fto" (fruit type options)
+						if (compName == "fto") {
+							//If the JComboBox's popup menu is not opened
+							if (((JComboBox) comp).isPopupVisible() == false) {
+								//Have the program request focus on the content JTextArea below
+								tex.requestFocus();
+							//If the popup menu is open
+							} else {
+					     		//If the next index does not equal/exceed the JComboBox's options' item count
+								if (((JComboBox) comp).getSelectedIndex() + 1 < ((JComboBox) comp).getItemCount()) {
+									//Set the currently selected index as the next one down the line
+						  			((JComboBox) comp).setSelectedIndex(((JComboBox) comp).getSelectedIndex() + 1);
+								}
+							}
+						//Otherwise, if the component name is "tex" (textarea)
+						} else if (compName == "tex") {
+							//Have the program focus on the "okay" JButton
+							okay.requestFocus();
+						//If the component name is "okay"
+						} else if (compName == "okay") {
+							//Have the program focus on the "back" ButtonLabel
+							backButt.requestFocus();
+						}
+					}
+				});
+			}
+			//Add a key binding to the parameter JComponent's input map for when the enter key is pressed
+			comp.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0,false), "enterPressed");
+			//Add to the parameter ButtonLabel's action map an abstract action that will perform when the enter key is pressed
+			comp.getActionMap().put("enterPressed",new AbstractAction(){
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					//If the component's class is that of ButtonLabel
+					if (comp.getClass().toString().equals("class org.mypackage.jdbcDemo.graphics.ButtonLabel")) {
+						//Call the buttonLabel's setClicked function
+						((ButtonLabel) comp).setClicked();
+					}
+				}
+			});
+			//Add a key binding to the parameter JComponent's input map for when the enter key is released
+			comp.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0,true), "enterReleased");
+			//Add to the parameter ButtonLabel's action map an abstract action that will perform when the enter key is released
+			comp.getActionMap().put("enterReleased",new AbstractAction(){
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					//If the component name is that of "back"
+					if (compName == "back") {
+						//Call the buttonLabel's setReleased function
+						((ButtonLabel) comp).setEnteredOrReleased();
+						//Call the setupMenu function
+						setupMainMenu();
+					//If the component name is that of "fto" (fruit type options)
+					} else if (compName == "fto") {
+						//If the JComboBox's menu is not opened
+					    if (((JComboBox) comp).isPopupVisible() == false) {
+					       	//Show the popup menu of the JComboBox
+					    	((JComboBox) comp).showPopup();
+					   	//If the JComboBox's menu is opened
+				      	} else {
+					   		//Close the popup menu, selecting the currently selected index in the process
+				      		((JComboBox) comp).hidePopup();
+				    	}
+					//If the component name is that of "tex"(textarea)
+					} else if (compName == "okay") {
+					    //Call the "addFruit" function
+						addFruit();
+					}
+				}
+			});
+			//If the component name is not that of "fto" (fruit type options)
+			if (compName != "fto") {
+				//Add a key binding to the parameter JComponent's input map for when the up key is pressed
+				comp.getInputMap().put(KeyStroke.getKeyStroke("UP"), "upPressed");
+				//Add to the JComponent's action map an abstractAction for if the up key is pressed
+				comp.getActionMap().put("upPressed", new AbstractAction(){
+					@Override
+					public void actionPerformed(ActionEvent e){
+						//If the component name equals that of "back"
+						if (compName == "back") {
+							//Have the program focus on the "okay" JButton
+							okay.requestFocus();
+						//If the component name equals that of "okay"
+						} else if (compName == "okay") {
+							 //Have the program focus on the "tex" JTextArea
+							tex.requestFocus();
+						//	If the component name equals that of "tex"
+						} else if (compName == "tex") {
+							//Have the program focus on the "fruitTypeOptions" JComboBox
+							fruitTypeOptions.requestFocus();
+						}
+					}
+				});
+			}
 		}
 		
 		public void setupMainMenu() {
