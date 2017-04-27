@@ -140,10 +140,11 @@ public class Quit extends JDialog {
 		comp.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				//
+				//If the String parameter equals "no"
 				if (compName.equals("no")) {
 					//Dispose of this instance
 					dispose();
+				//Otherwise, if the String parameter equals "yes"
 				} else if (compName.equals("yes")) {
 					//Close this system
 					System.exit(0);
