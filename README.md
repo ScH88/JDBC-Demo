@@ -1,5 +1,5 @@
 # JDBC-Demo
-A JFrame-based software demo utilizing a Spring/Hibernate JDBC system. Also uses an improved code based on the last dynamic GUI I published on this site. It currently works with Objects of the Fruit superclass, currently standing at Apples and Oranges.
+A JFrame-based software demo utilizing a Spring/Hibernate JDBC system. Uses a dynamic GUI system which I have refined over the past month. It currently works with Objects of the Fruit superclass, currently standing at Apples and Oranges.
 
 To create the tables required to make this program work, start by watching the following link.
 
